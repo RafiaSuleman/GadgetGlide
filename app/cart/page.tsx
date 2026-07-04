@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function CartPage() {
-  const { cart, removeFromCart, addToCart, clearCart,updateQuantity } = useCartStore();
+  const { cart, removeFromCart, clearCart,updateQuantity } = useCartStore();
 
   // Total Price Calculate karna
   const totalPrice = cart.reduce(
