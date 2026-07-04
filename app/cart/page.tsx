@@ -65,7 +65,7 @@ export default function CartPage() {
                 <div className="flex items-center gap-4 mt-4">
                   <div className="flex items-center border rounded-lg">
                     <button
-                      onClick={() => updateQuantity(item.slug, 'minusfghygtn ')} // Single item qty logic manage as per your store
+                      onClick={() => updateQuantity(item.slug, 'minus')} // Single item qty logic manage as per your store
                       className="px-3 py-1 hover:bg-gray-100 text-xl font-bold"
                     >
                       -
