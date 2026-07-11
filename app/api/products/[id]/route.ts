@@ -15,7 +15,7 @@ function verifyAdmin(req: NextRequest) {
   }
 }
 
-// ================= GET SINGLE PRODUCT =================
+//  GET SINGLE PRODUCT 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -53,7 +53,7 @@ export async function GET(
   }
 }
 
-// ================= UPDATE PRODUCT =================
+// UPDATE PRODUCT
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -94,7 +94,7 @@ export async function PATCH(
   }
 }
 
-// ================= DELETE PRODUCT =================
+//DELETE PRODUCT
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

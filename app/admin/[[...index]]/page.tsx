@@ -43,16 +43,39 @@ export default function ProductsPage() {
       product.category.toLowerCase().includes(value)
     );
   });
+  const deleteProduct = async (id: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?",
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`/api/products/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Delete failed");
+        return;
+      }
+
+      alert("Product deleted successfully");
+
+      // Remove product from UI
+      setProducts((prev) => prev.filter((item) => item._id !== id));
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong");
+    }
+  };
 
   return (
     <div className="p-10">
-       <h1 className="text-5xl text-red-600">
-      CATCH ALL PAGE
-    </h1>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">
-          Products Management
-        </h1>
+        <h1 className="text-3xl font-bold">Products Management</h1>
 
         <div className="flex gap-3">
           <Link
@@ -68,6 +91,12 @@ export default function ProductsPage() {
           >
             Orders
           </Link>
+          <Link
+            href="/admin/products/add"
+            className="bg-green-600 text-white px-5 py-2 rounded-lg"
+          >
+            + Add Product
+          </Link>
         </div>
       </div>
 
@@ -80,9 +109,7 @@ export default function ProductsPage() {
       />
 
       {filteredProducts.length === 0 ? (
-        <p className="text-center text-gray-500">
-          No Products Found
-        </p>
+        <p className="text-center text-gray-500">Products Loading ...</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.map((product) => (
@@ -99,26 +126,24 @@ export default function ProductsPage() {
                 />
               </div>
 
-              <h2 className="text-xl font-bold mt-4">
-                {product.name}
-              </h2>
+              <h2 className="text-xl font-bold mt-4">{product.name}</h2>
 
-              <p className="text-gray-500">
-                {product.category}
-              </p>
+              <p className="text-gray-500">{product.category}</p>
 
               <p className="font-bold text-lg mt-2">
                 Rs. {product.price.toLocaleString()}
               </p>
 
               <div className="flex gap-3 mt-5">
-                <button
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                <Link
+                  href={`/admin/products/edit/${product._id}`}
+                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-center"
                 >
                   Edit
-                </button>
+                </Link>
 
                 <button
+                  onClick={() => deleteProduct(product._id)}
                   className="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700"
                 >
                   Delete

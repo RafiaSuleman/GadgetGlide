@@ -17,7 +17,7 @@ function verifyAdmin(req: NextRequest) {
   }
 }
 
-// ==================== GET ORDERS ====================
+// GET ORDERS
 
 export async function GET(req: NextRequest) {
   if (!verifyAdmin(req)) {
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// ==================== UPDATE STATUS ====================
+// UPDATE STATUS
 
 export async function PATCH(req: NextRequest) {
   if (!verifyAdmin(req)) {
