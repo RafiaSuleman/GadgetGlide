@@ -23,6 +23,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import Sidebar from "@/components/admin/sidebar";
 interface Stats {
   products: number;
   totalOrders: number;
@@ -35,7 +36,10 @@ interface Stats {
     name: string;
     value: number;
   }[];
-
+  latestCustomers: {
+    fullName: string;
+    email: string;
+  }[];
   monthlyRevenue: {
     month: string;
     revenue: number;
@@ -61,6 +65,7 @@ export default function DashboardPage() {
     deliveredOrders: 0,
     revenue: 0,
     todaysOrders: 0,
+    latestCustomers: [],
     orderStatus: [],
     monthlyRevenue: [],
     recentOrders: [],
@@ -131,38 +136,16 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="flex min-h-screen bg-gray-100">
+    <Sidebar />
+      <main className="flex-1 p-8">
       <div className="flex justify-between items-center mb-10">
         <div>
           <h1 className="text-4xl font-bold">Admin Dashboard</h1>
 
           <p className="text-gray-500 mt-2">Welcome back 👋</p>
         </div>
-
-        <div className="flex gap-3">
-          <Link
-            href="/admin/products"
-            className="bg-blue-600 text-white px-5 py-3 rounded-lg"
-          >
-            Products
-          </Link>
-
-          <Link
-            href="/admin/orders"
-            className="bg-green-600 text-white px-5 py-3 rounded-lg"
-          >
-            Orders
-          </Link>
-
-          <Link
-            href="/admin/products/add"
-            className="bg-purple-600 text-white px-5 py-3 rounded-lg"
-          >
-            + Add Product
-          </Link>
-        </div>
       </div>
-
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card) => (
           <div
@@ -296,6 +279,25 @@ export default function DashboardPage() {
           </table>
         </div>
       </div>
+      <div className="bg-white rounded-2xl shadow p-6 mt-8">
+        <h2 className="text-2xl font-bold mb-6">Latest Customers</h2>
+
+        <div className="space-y-4">
+          {stats.latestCustomers.map((customer, index) => (
+            <div
+              key={index}
+              className="flex justify-between items-center border-b pb-3"
+            >
+              <div>
+                <p className="font-semibold">{customer.fullName}</p>
+
+                <p className="text-sm text-gray-500">{customer.email}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      </main>
     </div>
   );
 }

@@ -37,10 +37,19 @@ export async function GET(req: NextRequest) {
     const todaysOrders = orders.filter((order: { orderDate: string }) =>
       order.orderDate.startsWith(today),
     ).length;
-
-    const pendingOrders = orders.filter(
-      (order: { status: string }) => order.status === "pending",
-    ).length;
+    const todaysRevenue = orders
+      .filter(
+        (order: {
+          orderDate: string;
+          status: string;
+          totalAmount?: number | string;
+        }) => order.orderDate.startsWith(today) && order.status === "delivered",
+      )
+      .reduce(
+    (total: number, order: { totalAmount?: number | string }) =>
+      total + Number(order.totalAmount || 0),
+    0
+  );
 
     const shippedOrders = orders.filter(
       (order: { status: string }) => order.status === "shipped",
@@ -48,6 +57,10 @@ export async function GET(req: NextRequest) {
 
     const deliveredOrders = orders.filter(
       (order: { status: string }) => order.status === "delivered",
+    ).length;
+
+    const pendingOrders = orders.filter(
+      (order: { status: string }) => order.status === "pending",
     ).length;
 
     // Revenue (Delivered Orders Only)
@@ -119,6 +132,19 @@ export async function GET(req: NextRequest) {
           status: order.status,
         }),
       );
+      // Latest Customers
+const latestCustomers = [...orders]
+  .reverse()
+  .slice(0, 5)
+  .map(
+    (order: {
+      fullName: string;
+      email: string;
+    }) => ({
+      fullName: order.fullName,
+      email: order.email,
+    })
+  );
     // Top Selling Products
     const productSales: Record<string, number> = {};
 
@@ -141,21 +167,25 @@ export async function GET(req: NextRequest) {
       }))
       .sort((a, b) => b.sold - a.sold)
       .slice(0, 5);
-    return NextResponse.json({
-      products,
-      totalOrders,
-      pendingOrders,
-      shippedOrders,
-      deliveredOrders,
-      revenue,
-      todaysOrders,
+   return NextResponse.json({
+  products,
+  totalOrders,
+  pendingOrders,
+  shippedOrders,
+  deliveredOrders,
+  revenue,
 
-      orderStatus,
-      monthlyRevenue,
-      recentOrders,
+  todaysOrders,
+  todaysRevenue,
 
-      topProducts,
-    });
+  orderStatus,
+  monthlyRevenue,
+
+  recentOrders,
+  topProducts,
+
+  latestCustomers,
+});
   } catch (error) {
     console.error(error);
 
