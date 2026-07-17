@@ -5,19 +5,23 @@ import jwt from "jsonwebtoken";
 function verifyAdmin(req: NextRequest) {
   const token = req.cookies.get("admin_token")?.value;
 
+  console.log("TOKEN:", token);
+
   if (!token) {
     return false;
   }
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    console.log("JWT VERIFIED:", decoded);
     return true;
-  } catch {
+  } catch (error) {
+    console.log("JWT ERROR:", error);
     return false;
   }
 }
 
-// GET ORDERS
+// ================= GET ORDERS =================
 
 export async function GET(req: NextRequest) {
   if (!verifyAdmin(req)) {
@@ -51,7 +55,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// UPDATE STATUS
+// ================= UPDATE STATUS =================
 
 export async function PATCH(req: NextRequest) {
   if (!verifyAdmin(req)) {

@@ -1,158 +1,301 @@
 "use client";
-
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { FaCalendarDay } from "react-icons/fa";
+import {
+  FaBoxOpen,
+  FaShoppingCart,
+  FaMoneyBillWave,
+  FaClock,
+  FaTruck,
+  FaCheckCircle,
+} from "react-icons/fa";
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  BarChart,
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+} from "recharts";
+interface Stats {
+  products: number;
+  totalOrders: number;
+  pendingOrders: number;
+  shippedOrders: number;
+  deliveredOrders: number;
+  revenue: number;
+  todaysOrders: number;
+  orderStatus: {
+    name: string;
+    value: number;
+  }[];
 
-interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  category: string;
-  imageUrl: string;
-  slug: string;
+  monthlyRevenue: {
+    month: string;
+    revenue: number;
+  }[];
+
+  recentOrders: {
+    fullName: string;
+    totalAmount: number;
+    status: string;
+  }[];
+  topProducts: {
+    name: string;
+    sold: number;
+  }[];
 }
 
-export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [search, setSearch] = useState("");
+export default function DashboardPage() {
+  const [stats, setStats] = useState<Stats>({
+    products: 0,
+    totalOrders: 0,
+    pendingOrders: 0,
+    shippedOrders: 0,
+    deliveredOrders: 0,
+    revenue: 0,
+    todaysOrders: 0,
+    orderStatus: [],
+    monthlyRevenue: [],
+    recentOrders: [],
+    topProducts: [],
+  });
 
   useEffect(() => {
-    async function loadProducts() {
+    async function loadStats() {
       try {
-        const res = await fetch("/api/products", {
+        const res = await fetch("/api/admin/stats", {
           cache: "no-store",
         });
 
         const data = await res.json();
-
-        setProducts(data);
+        console.log("Dashboard Data:", data);
+        setStats(data);
       } catch (error) {
-        console.error("Failed to fetch products:", error);
+        console.error(error);
       }
     }
 
-    loadProducts();
+    loadStats();
   }, []);
-
-  const filteredProducts = products.filter((product) => {
-    const value = search.toLowerCase();
-
-    return (
-      product.name.toLowerCase().includes(value) ||
-      product.category.toLowerCase().includes(value)
-    );
-  });
-  const deleteProduct = async (id: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this product?",
-    );
-
-    if (!confirmDelete) return;
-
-    try {
-      const res = await fetch(`/api/products/${id}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.error || "Delete failed");
-        return;
-      }
-
-      alert("Product deleted successfully");
-
-      // Remove product from UI
-      setProducts((prev) => prev.filter((item) => item._id !== id));
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
-    }
-  };
+  const COLORS = ["#facc15", "#3b82f6", "#22c55e"];
+  const cards = [
+    {
+      title: "Products",
+      value: stats.products,
+      color: "bg-blue-500",
+      icon: <FaBoxOpen size={28} />,
+    },
+    {
+      title: "Orders",
+      value: stats.totalOrders,
+      color: "bg-purple-500",
+      icon: <FaShoppingCart size={28} />,
+    },
+    {
+      title: "Today's Orders",
+      value: stats.todaysOrders,
+      color: "bg-pink-500",
+      icon: <FaCalendarDay size={28} />,
+    },
+    {
+      title: "Revenue",
+      value: `Rs. ${stats.revenue.toLocaleString()}`,
+      color: "bg-green-500",
+      icon: <FaMoneyBillWave size={28} />,
+    },
+    {
+      title: "Pending",
+      value: stats.pendingOrders,
+      color: "bg-yellow-500",
+      icon: <FaClock size={28} />,
+    },
+    {
+      title: "Shipped",
+      value: stats.shippedOrders,
+      color: "bg-indigo-500",
+      icon: <FaTruck size={28} />,
+    },
+    {
+      title: "Delivered",
+      value: stats.deliveredOrders,
+      color: "bg-emerald-600",
+      icon: <FaCheckCircle size={28} />,
+    },
+  ];
 
   return (
-    <div className="p-10">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Products Management</h1>
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="flex justify-between items-center mb-10">
+        <div>
+          <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+
+          <p className="text-gray-500 mt-2">Welcome back 👋</p>
+        </div>
 
         <div className="flex gap-3">
           <Link
-            href="/admin"
-            className="px-5 py-2 bg-black text-white rounded-lg"
+            href="/admin/products"
+            className="bg-blue-600 text-white px-5 py-3 rounded-lg"
           >
-            Dashboard
+            Products
           </Link>
 
           <Link
             href="/admin/orders"
-            className="px-5 py-2 bg-blue-600 text-white rounded-lg"
+            className="bg-green-600 text-white px-5 py-3 rounded-lg"
           >
             Orders
           </Link>
+
           <Link
             href="/admin/products/add"
-            className="bg-green-600 text-white px-5 py-2 rounded-lg"
+            className="bg-purple-600 text-white px-5 py-3 rounded-lg"
           >
             + Add Product
           </Link>
         </div>
       </div>
 
-      <input
-        type="text"
-        placeholder="Search by product name or category..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="border rounded-lg p-3 w-full mb-8"
-      />
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {cards.map((card) => (
+          <div
+            key={card.title}
+            className={`${card.color} text-white rounded-2xl p-6 shadow-lg`}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-lg opacity-90">{card.title}</p>
 
-      {filteredProducts.length === 0 ? (
-        <p className="text-center text-gray-500">Products Loading ...</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((product) => (
+                <h2 className="text-4xl font-bold mt-2">{card.value}</h2>
+              </div>
+
+              {card.icon}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="grid lg:grid-cols-2 gap-8 mt-10">
+        <div className="bg-white rounded-2xl shadow p-6">
+          <h2 className="text-2xl font-bold mb-6">Monthly Revenue</h2>
+
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={stats.monthlyRevenue}>
+              <CartesianGrid strokeDasharray="3 3" />
+
+              <XAxis dataKey="month" />
+
+              <YAxis />
+
+              <Tooltip />
+
+              <Bar dataKey="revenue" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow p-6">
+          <h2 className="text-2xl font-bold mb-6">Order Status</h2>
+
+          <ResponsiveContainer width="100%" height={320}>
+            <PieChart>
+              <Pie
+                data={stats.orderStatus}
+                dataKey="value"
+                nameKey="name"
+                outerRadius={110}
+                label
+              >
+                {stats.orderStatus.map((_, index) => (
+                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+
+              <Tooltip />
+
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div className="bg-white rounded-2xl shadow p-6 mt-8">
+        <h2 className="text-2xl font-bold mb-6">Top Selling Products</h2>
+
+        <div className="space-y-4">
+          {stats.topProducts.map((product, index) => (
             <div
-              key={product._id}
-              className="border rounded-xl p-5 shadow-sm hover:shadow-lg transition"
+              key={product.name}
+              className="flex justify-between items-center border-b pb-3"
             >
-              <div className="relative w-full h-56 bg-gray-100 rounded-lg overflow-hidden">
-                <Image
-                  src={product.imageUrl}
-                  alt={product.name}
-                  fill
-                  className="object-contain p-4"
-                />
+              <div className="flex items-center gap-3">
+                <span className="font-bold text-lg">#{index + 1}</span>
+
+                <span className="font-semibold">{product.name}</span>
               </div>
 
-              <h2 className="text-xl font-bold mt-4">{product.name}</h2>
-
-              <p className="text-gray-500">{product.category}</p>
-
-              <p className="font-bold text-lg mt-2">
-                Rs. {product.price.toLocaleString()}
-              </p>
-
-              <div className="flex gap-3 mt-5">
-                <Link
-                  href={`/admin/products/edit/${product._id}`}
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-center"
-                >
-                  Edit
-                </Link>
-
-                <button
-                  onClick={() => deleteProduct(product._id)}
-                  className="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700"
-                >
-                  Delete
-                </button>
-              </div>
+              <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+                {product.sold} Sold
+              </span>
             </div>
           ))}
         </div>
-      )}
+      </div>
+      <div className="bg-white rounded-2xl shadow p-6 mt-8">
+        <h2 className="text-2xl font-bold mb-6">Recent Orders</h2>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b text-left">
+                <th className="py-3">Customer</th>
+                <th className="py-3">Amount</th>
+                <th className="py-3">Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {stats.recentOrders.map((order, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="py-4 font-medium">{order.fullName}</td>
+
+                  <td className="py-4">
+                    Rs. {order.totalAmount.toLocaleString()}
+                  </td>
+
+                  <td className="py-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-semibold
+                  ${
+                    order.status === "pending"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : ""
+                  }
+                  ${
+                    order.status === "shipped"
+                      ? "bg-blue-100 text-blue-700"
+                      : ""
+                  }
+                  ${
+                    order.status === "delivered"
+                      ? "bg-green-100 text-green-700"
+                      : ""
+                  }`}
+                    >
+                      {order.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
