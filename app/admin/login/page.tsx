@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
     return;
   }
 
-  window.location.replace("/admin/orders");
+  window.location.replace("/admin");
 };
 
   return (
