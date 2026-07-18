@@ -60,8 +60,6 @@ export default function CheckoutPage() {
       throw new Error(result.error || "Failed to save order");
     }
 
-    alert("Thank you! Your order has been placed.");
-
     clearCart();
     router.push("/");
   } catch (error) {
