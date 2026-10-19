@@ -54,7 +54,7 @@ const FeatureProducts = async () => {
         {/* Compact Product Grid: 2 mobile, 3 desktop */}
         {products.length > 0 ? (
           <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-5  lg:gap-6">
-            {products.slice(0, 7).map((product) => (
+            {products.slice(0, 5).map((product) => (
               <article
                 key={product.slug}
                 className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
