@@ -154,12 +154,12 @@ const Hero = () => {
                   <div className="pointer-events-none absolute h-48 w-48 rounded-full bg-blue-500/20 blur-[70px] sm:h-64 sm:w-64" />
 
                   {/* Decorative circle */}
-                  <div className="pointer-events-none absolute h-[220px] w-[220px] rounded-full border border-white/[0.07] sm:h-[300px] sm:w-[300px] md:h-[360px] md:w-[360px]" />
+                  <div className="pointer-events-none absolute h-55 w-55 rounded-full border border-white/[0.07] sm:h-75 sm:w-75 md:h-90 md:w-90" />
 
-                  <div className="pointer-events-none absolute h-[175px] w-[175px] rounded-full border border-blue-400/10 sm:h-[245px] sm:w-[245px] md:h-[290px] md:w-[290px]" />
+                  <div className="pointer-events-none absolute h-43.75 w-43.75 rounded-full border border-blue-400/10 sm:h-61.25 sm:w-61.25 md:h-72.5 md:w-72.5" />
 
                   {/* Image */}
-                  <div className="relative h-[235px] w-[90%] max-w-[420px] sm:h-[260px] md:h-[410px] md:w-full">
+                  <div className="relative h-58.75 w-[90%] max-w-105 sm:h-65 md:h-102.5 md:w-full">
                     <Image
                       src={slide.img}
                       alt={slide.title}
@@ -171,7 +171,7 @@ const Hero = () => {
                   </div>
 
                   {/* Floating accent */}
-                  <div className="absolute bottom-5 right-1 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 shadow-xl backdrop-blur-md sm:right-5 md:bottom-8 md:right-0">
+                  <div className="absolute bottom-5 right-1 rounded-2xl border border-white/10 bg-white/6 px-4 py-3 shadow-xl backdrop-blur-md sm:right-5 md:bottom-8 md:right-0">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-gray-400">
                       Discover
                     </p>
