@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SubscribeForm from "./subscribeForm";
 
 const Footer = () => {
   return (
@@ -41,16 +42,7 @@ const Footer = () => {
         <div>
           <h3 className="text-lg font-bold mb-6">Stay Updated</h3>
           <p className="text-gray-400 text-sm mb-4">Subscribe to get special offers and news.</p>
-          <div className="flex flex-col gap-2">
-            <input 
-              type="email" 
-              placeholder="Enter your email" 
-              className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
-            />
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition">
-              Subscribe
-            </button>
-          </div>
+          <SubscribeForm />
         </div>
       </div>
 

@@ -96,7 +96,7 @@ export default function Hero() {
           {slides.map((slide, index) => (
             <div
               key={slide.id}
-              className="h-[calc(100svh-80px)] min-h-[480px] max-h-[720px] min-w-0 flex-[0_0_100%] md:h-[520px] md:min-h-0 md:max-h-none"
+              className="h-[calc(100svh-80px)] min-h-120 max-h-180 min-w-0 flex-[0_0_100%] md:h-130 md:min-h-0 md:max-h-none"
             >
               <div className="relative mx-auto flex h-full w-full max-w-7xl flex-col px-4 pb-14 pt-3 sm:px-6 md:flex-row md:items-center md:px-10 md:pb-0 md:pt-0 lg:px-12">
 
@@ -124,7 +124,7 @@ export default function Hero() {
                   </p>
 
                   {/* Buttons */}
-                  <div className="mt-4 flex w-full max-w-[350px] items-center gap-2 sm:mt-5 md:w-auto md:max-w-none md:gap-3">
+                  <div className="mt-4 flex w-full max-w-87.5 items-center gap-2 sm:mt-5 md:w-auto md:max-w-none md:gap-3">
 
                     <Link
                       href={slide.src}
@@ -158,12 +158,12 @@ export default function Hero() {
                   <div className="pointer-events-none absolute h-36 w-36 rounded-full bg-blue-500/20 blur-[60px] sm:h-52 sm:w-52 md:h-64 md:w-64" />
 
                   {/* Decorative circles */}
-                  <div className="pointer-events-none absolute h-40 w-40 rounded-full border border-white/[0.07] min-[400px]:h-44 min-[400px]:w-44 sm:h-56 sm:w-56 md:h-[330px] md:w-[330px]" />
+                  <div className="pointer-events-none absolute h-40 w-40 rounded-full border border-white/[0.07] min-[400px]:h-44 min-[400px]:w-44 sm:h-56 sm:w-56 md:h-82.5 md:w-82.5" />
 
-                  <div className="pointer-events-none absolute h-32 w-32 rounded-full border border-blue-400/10 min-[400px]:h-36 min-[400px]:w-36 sm:h-44 sm:w-44 md:h-[260px] md:w-[260px]" />
+                  <div className="pointer-events-none absolute h-32 w-32 rounded-full border border-blue-400/10 min-[400px]:h-36 min-[400px]:w-36 sm:h-44 sm:w-44 md:h-65 md:w-65" />
 
                   {/* Product image */}
-                  <div className="relative h-full max-h-[220px] w-full max-w-[300px] min-h-[150px] sm:max-h-[240px] md:h-[350px] md:min-h-0 md:max-h-none md:max-w-none lg:h-[380px]">
+                  <div className="relative h-full max-h-55 w-full max-w-75 min-h-37.5 sm:max-h-60 md:h-87.5 md:min-h-0 md:max-h-none md:max-w-none lg:h-95">
                     <Image
                       src={slide.img}
                       alt={slide.title}
@@ -175,7 +175,7 @@ export default function Hero() {
                   </div>
 
                   {/* Desktop accent */}
-                  <div className="absolute bottom-4 right-0 hidden rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 shadow-xl backdrop-blur-md md:block lg:right-1">
+                  <div className="absolute bottom-4 right-0 hidden rounded-2xl border border-white/10 bg-white/6 px-4 py-3 shadow-xl backdrop-blur-md md:block lg:right-1">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-gray-400">
                       Discover
                     </p>

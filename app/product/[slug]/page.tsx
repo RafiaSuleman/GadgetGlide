@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import AddToCartBtn from "@/app/components/addToCartBtn";
 
-// Typescript interface for better development
 interface ProductDetail {
   name: string;
   price: number;
@@ -14,7 +13,9 @@ interface ProductDetail {
   slug: string;
 }
 
-async function getProductDetails(slug: string): Promise<ProductDetail | null> {
+async function getProductDetails(
+  slug: string
+): Promise<ProductDetail | null> {
   const query = `*[_type == "product" && slug.current == $slug][0]{
     name,
     price,
@@ -23,104 +24,197 @@ async function getProductDetails(slug: string): Promise<ProductDetail | null> {
     category,
     "slug": slug.current
   }`;
-  return await client.fetch(query, { slug });
+
+  return client.fetch(query, { slug });
 }
 
-export default async function ProductDetails({ params }: { params: Promise<{ slug: string }> }) {
-  // 1. Await params for Next.js 15 compatibility
+export default async function ProductDetails({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const product = await getProductDetails(slug);
 
-  // 2. Error handling if product not found
-  if (!product) return notFound();
+  if (!product) {
+    notFound();
+  }
+
+  const category = product.category || "Technology";
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
-        
-        {/* Breadcrumbs for SEO and Navigation */}
-        <nav className="flex text-sm text-gray-500 mb-8 gap-2">
-          <Link href="/" className="hover:text-blue-600">Home</Link>
-          <span>/</span>
-          <Link href={`/category/${product.category}`} className="hover:text-blue-600 capitalize">
-            {product.category}
+    <main className="min-h-screen bg-white text-gray-900">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
+
+        {/* Breadcrumbs */}
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-5 flex flex-wrap items-center gap-2 text-xs text-gray-500 sm:mb-8 sm:text-sm"
+        >
+          <Link
+            href="/"
+            className="shrink-0 transition-colors hover:text-blue-600"
+          >
+            Home
           </Link>
+
           <span>/</span>
-          <span className="text-gray-900 font-medium truncate">{product.name}</span>
+
+          <Link
+            href={`/category/${product.category}`}
+            className="shrink-0 capitalize transition-colors hover:text-blue-600"
+          >
+            {category}
+          </Link>
+
+          <span>/</span>
+
+          <span className="min-w-0 truncate font-medium text-gray-900">
+            {product.name}
+          </span>
         </nav>
 
-        <div className="flex flex-col md:flex-row gap-12 lg:gap-20 items-start">
-          
-          {/* Left: Image Gallery Container */}
-          <div className="w-full md:w-1/2 bg-gray-50 rounded-3xl p-6 md:p-12 flex justify-center sticky top-28">
-            <div className="relative h-87.5 w-full md:h-125 group">
-              <Image 
-                src={product.imageUrl} 
-                alt={product.name} 
-                fill 
-                className="object-contain drop-shadow-2xl group-hover:scale-105 transition-transform duration-500"
-                priority
-              />
+        {/* Product Layout */}
+        <div className="flex flex-col items-start gap-6 md:flex-row md:gap-10 lg:gap-16">
+
+          {/* Product Image */}
+          <div className="relative w-full min-w-0 rounded-2xl bg-[#f7f8fc] p-4 sm:rounded-3xl sm:p-6 md:sticky md:top-24 md:w-1/2 md:p-8 lg:p-10">
+            <div className="relative h-65 w-full sm:h-87.5 md:h-100 lg:h-115">
+              {product.imageUrl ? (
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  fill
+                  priority
+                  sizes="(max-width: 767px) 100vw, 50vw"
+                  className="object-contain transition-transform duration-300 md:hover:scale-105"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-sm text-gray-400">
+                  Product image unavailable
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Right: Product Info */}
-          <div className="w-full md:w-1/2 space-y-8">
+          {/* Product Information */}
+          <div className="w-full min-w-0 space-y-6 md:w-1/2 md:space-y-7">
+
+            {/* Category and Title */}
             <div>
-              <span className="inline-block bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-4">
-                {product.category}
+              <span className="mb-3 inline-block max-w-full truncate rounded-full bg-blue-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-700 sm:text-xs">
+                {category}
               </span>
-              <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 leading-tight">
+
+              <h1 className="wrap-break-word text-2xl font-black leading-tight tracking-tight text-gray-950 sm:text-3xl lg:text-5xl">
                 {product.name}
               </h1>
             </div>
 
-            <div className="flex items-center gap-4 border-b border-gray-100 pb-8">
-              <div className="flex flex-col">
-                <p className="text-sm text-gray-500 font-medium uppercase tracking-tighter">Current Price</p>
-                <span className="text-4xl font-black text-blue-600 font-serif">
-                  Rs. {product.price.toLocaleString()}
-                </span>
+            {/* Price and Availability */}
+            <div className="flex items-center justify-between gap-3 border-b border-gray-100 pb-6 sm:pb-8">
+              <div className="min-w-0">
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500 sm:text-sm">
+                  Current Price
+                </p>
+
+                <p className="mt-2 wrap-break-word text-2xl font-black text-blue-600 sm:text-3xl lg:text-4xl">
+                  Rs. {Number(product.price).toLocaleString("en-PK")}
+                </p>
               </div>
-              <div className="ml-auto bg-green-50 text-green-700 px-3 py-1 rounded-md text-sm font-bold">
+
+              <span className="shrink-0 rounded-lg bg-green-50 px-2.5 py-1.5 text-xs font-bold text-green-700 sm:px-3 sm:text-sm">
                 In Stock
-              </div>
+              </span>
             </div>
 
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-gray-800">Key Features & Description</h3>
-              <p className="text-gray-600 leading-relaxed text-lg font-light">
-                {product.description || "High-quality tech product designed for maximum performance and durability. Perfect for professional and personal use."}
+            {/* Product Description */}
+            <div className="space-y-3">
+              <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
+                Product Description
+              </h2>
+
+              <p className="break-word text-sm leading-7 text-gray-600 sm:text-base">
+                {product.description ||
+                  "High-quality tech product designed for performance and durability. Perfect for professional and personal use."}
               </p>
             </div>
 
             {/* Action Buttons */}
-            <div className="pt-6 flex flex-col sm:flex-row gap-4">
-             <AddToCartBtn product={product} />
-              <button className="flex-1 border-2 border-gray-200 text-gray-900 py-4 rounded-2xl font-bold hover:bg-gray-100 transition-all text-lg active:scale-95">
+            <div className="grid grid-cols-2 items-stretch gap-3 border-b border-gray-100 pb-6 pt-2 sm:gap-4 sm:pb-8">
+
+              {/* Add to Cart */}
+              <div
+                className="
+                  flex min-h-12 min-w-0 items-stretch
+                  [&_button]:m-0!
+                  [&_button]:flex!
+                  [&_button]:h-12!
+                  [&_button]:min-h-12!
+                  [&_button]:w-full!
+                  [&_button]:items-center!
+                  [&_button]:justify-center!
+                  [&_button]:rounded-xl!
+                  [&_button]:px-2!
+                  [&_button]:py-3!
+                  [&_button]:text-xs!
+                  [&_button]:font-bold!
+                  sm:[&_button]:text-sm!
+                "
+              >
+                <AddToCartBtn product={product} />
+              </div>
+
+              {/* Buy Now */}
+              <button
+                type="button"
+                className="
+                  flex h-12 min-h-12 w-full min-w-0
+                  items-center justify-center rounded-xl
+                  border border-gray-200 bg-white
+                  px-2 py-3 text-xs font-bold text-gray-900
+                  transition-all duration-200
+                  hover:border-blue-600 hover:bg-blue-600 hover:text-white
+                  active:scale-[0.98]
+                  sm:text-sm
+                "
+              >
                 Buy Now
               </button>
+
             </div>
 
-            {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-4 pt-8 border-t border-gray-100">
-              <div className="text-center p-3">
-                <div className="text-blue-600 text-xl mb-1">🚚</div>
-                <p className="text-[10px] font-bold text-gray-500 uppercase">Fast Delivery</p>
+            {/* Shopping Benefits */}
+            <div className="grid grid-cols-3 gap-2 pt-1 sm:gap-4">
+
+              <div className="rounded-xl bg-gray-50 px-2 py-4 text-center sm:px-3">
+                <div className="mb-2 text-xl">🚚</div>
+
+                <p className="text-[9px] font-bold uppercase leading-4 text-gray-500 sm:text-[10px]">
+                  Fast Delivery
+                </p>
               </div>
-              <div className="text-center p-3 border-x border-gray-100">
-                <div className="text-blue-600 text-xl mb-1">🛡️</div>
-                <p className="text-[10px] font-bold text-gray-500 uppercase">1 Year Warranty</p>
+
+              <div className="rounded-xl bg-gray-50 px-2 py-4 text-center sm:px-3">
+                <div className="mb-2 text-xl">🛡️</div>
+
+                <p className="text-[9px] font-bold uppercase leading-4 text-gray-500 sm:text-[10px]">
+                  1 Year Warranty
+                </p>
               </div>
-              <div className="text-center p-3">
-                <div className="text-blue-600 text-xl mb-1">🔄</div>
-                <p className="text-[10px] font-bold text-gray-500 uppercase">Easy Returns</p>
+
+              <div className="rounded-xl bg-gray-50 px-2 py-4 text-center sm:px-3">
+                <div className="mb-2 text-xl">🔄</div>
+
+                <p className="text-[9px] font-bold uppercase leading-4 text-gray-500 sm:text-[10px]">
+                  Easy Returns
+                </p>
               </div>
+
             </div>
           </div>
-
         </div>
       </div>
-    </div>
+    </main>
   );
 }
