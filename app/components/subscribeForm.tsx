@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+
 type SubscribeFormProps = {
   onSubscribe?: (email: string) => Promise<void> | void;
 };
@@ -16,19 +17,39 @@ export default function SubscribeForm({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage("");
-
-    if (!onSubscribe) {
-      setMessage("Subscription service abhi connect nahi hai.");
-      return;
-    }
+    setLoading(true);
 
     try {
-      setLoading(true);
-      await onSubscribe(email.trim());
+      const cleanEmail = email.trim().toLowerCase();
+
+      if (onSubscribe) {
+        await onSubscribe(cleanEmail);
+      } else {
+        const response = await fetch("/api/subscribe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: cleanEmail }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.error || "Subscription failed. Please try again."
+          );
+        }
+      }
+
       setMessage("Thank you for subscribing!");
       setEmail("");
-    } catch {
-      setMessage("Something went wrong. Please try again.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -57,7 +78,7 @@ export default function SubscribeForm({
       </form>
 
       {message && (
-        <p role="status" className="mt-2 text-sm text-gray-300">
+        <p className="mt-2 text-sm text-gray-300" role="status">
           {message}
         </p>
       )}
